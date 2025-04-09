@@ -174,17 +174,114 @@
 
 
 
-select * from teacher;
-select st.name_stu, st.gender, st.name_parent from student st;
+-- select * from teacher;
+-- select st.name_stu, st.gender, st.name_parent from student st;
 
-select * from class;
+-- select * from class;
 
-select name_stu, gender, address from student where name_parent is null;
+-- select name_stu, gender, address from student where name_parent is null;
 
-select * from class where id_teacher is null;
-
-
+-- select * from class where id_teacher is null;
 
 
+-- select * from result
+-- ORDER BY score_midterm desc;
+
+-- select* from student
+-- order by substring_index(name_stu, ' ', -1);
+
+
+-- select * from student inner join class on student.id_class = class.id_class
+
+--  WHERE --
+-- a, học sinh có giới tính nam--
+SELECT * FROM student where gender = 'nam';   
+--  b, học sinh chưa có tên phụ huynh--
+select name_stu, gender, address from student where name_parent is null; 
+-- c, những lớp chưa có gvcn --
+select * from class where id_dep is null;
+
+ -- d. học sinh chưa được phân lớp --
+select * from student where id_class is null;
+-- e. học sinh nữ có địa chỉ Lào Cai --
+select * from student where gender = 'nữ' and dia_chi like'%Lào Cai%';
+-- f. hs nam ở Lạng Sơn hoặc hs nữ ở Lào Cai --
+select * from studnet where(gender = 'Nam' and address like '%Lạng Sơn%') or (gender = 'nữ' and address like '%Lào Cai%');
+-- g. hs nam chưa có tên ph và hs nữ chưa được phân lớp --
+select * from student where(gender = 'nam' and name_parent is null) or (gender = 'nữ' and id_class is null);
+-- h. hs nam chưa được phân lớp và chưa có tên ph
+select * from student where gender = 'nam' and (id_class is null or name_parent is null);
+-- i. mã môn học của những môn được dạy trong hk2 -- 
+select distinct id_sub from department_head where semester = 'Học kỳ 2';
+
+-- test LIKE --
+-- a. hs có tên bắt đầu bằng từ Nguyễn
+select * from student where name_stu like 'Nguyễn %';
+-- b. hs có họ tên kết thúc bằng từ An
+select * from student where name_stu like '% An';
+-- c. hs có họ tên chứa từ thị
+select * from student where name_stu like '%thị%';
+-- d. hs chứa từ thị ở giữa 
+select * from student where name_stu like '%thị%' and name_stu not like 'thị%' and name_stu not like '%thị';
+-- e. hs có họ tên với độ dài 30 ký tự 
+select * from student where char_length(name_stu) = 30;
+-- f. hs có họ tên tối đa 30 ký tự
+select * from student where char_length(name_stu) <= 30;
+-- g. hs có họ tên với độ dài tối đa là 30 ký tự và bắt đầu bằng ký tự N
+select * from student where char_length(name_stu) <=30 and name_stu like 'n%';
+-- h hs có họ tên bắt đầu bằng N, T, V
+select * from student where name_stu like 'n%' or name_stu like 'v%' or name_stu like 't%';
+-- i. hs có tên không được bắt đầu bằng n t v
+select * from student where name_stu like '%n' and name_stu not like'n%';
+-- j hs có họ tên với phần họ có 4 ký tự
+select * from student where name_stu like '____%';
+
+-- orderbyte
+-- a. thông tin toàn bộ hs, sắp xếp tăng dần theo họ tên hs
+select * from student order by name_stu asc ;
+-- b. sắp xếp giảm dần theo địa chỉ
+select * from student order by address desc;
+-- c. sắp xếp tăng dần theo họ tên hs và giảm theo địa chỉ
+select * from student order by name_stu asc, address desc;
+-- d. họ tên hs tăng dần, địa chỉ tăng dần
+select * from student order by name_stu asc, address asc;
+-- e. họ tên giảm, dịa chỉ giảm
+select * from student order by name_stu desc, address desc;
+-- f. họ tên hs , địa chỉ giảm, họ tên ph tăng
+select *  from student order by name_stu desc, address desc, name_parent asc;
+-- asc có hay k cx được --
+ 
+-- join 2 bảng
+-- a. 
+select * from student inner join lop on student.id_class = class.id_class;
+-- b.
+select * from student inner join result on student.id_stu = result.id_stu;
+-- c.
+select * from department_head inner join teacher on department_head.id_dep = teacher.id_teacher;
+-- d. nếu chưa phân lớp thì sẽ không hiện ra trừ khi chúng ta thay inner join bằng left join để lấy ra giá trị bên trái 
+-- e. nếu chưa có kq thi, thì sẽ không hiện ra
+-- f. nếu có giáo viên nào ch phụ trách thì sẽ không hiện ra giáo viên đó
+
+
+-- join nhiều bảng
+-- a.
+select id_stu, name_stu, gender, class.id_class, name_class, n_year, id_teacher, name_teacher from class
+inner join student on class.id_class = student.id_class
+inner join teacher on class.id_teacher = teacher.id_teacher;
+-- b 
+select student.id_stu, name_stu, semester, sub_ject.id_sub, name_sub, scrore_midterm, score_end_of_period from student
+inner join result on student.id_stu = result.id_stu
+inner join sub_ject on p.name_sub = sub_ject.id_sub;
+
+-- distinct
+select distinct name_stu from student;
+select distinct id_class from class;
+
+drop table teacher;
+drop table student;
+drop table result;
+drop table class;
+drop table sub_ject;
+drop table department_head;
 
 
